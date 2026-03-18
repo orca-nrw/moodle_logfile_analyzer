@@ -1,5 +1,6 @@
 import csv
 import os
+import re
 from datetime import datetime
 
 DATUM_FORMAT = "%d. %B %Y, %H:%M:%S"
@@ -51,8 +52,11 @@ def verarbeite_datei(dateipfad):
                 gaeste_ips.add(row[8])
             else:
                 loginname = row[1]
-                if loginname not in BLACKLIST and len(loginname) > 4:
-                    nutzer.add(loginname)
+                match=re.search(r"The user with id '(\d+)'", row[6])
+                if match:
+                    userid = match.group(1)
+                    if loginname not in BLACKLIST:
+                        nutzer.add(userid)
 
     return fruehestes_datum, kursname, len(gaeste_ips), len(nutzer)
 
